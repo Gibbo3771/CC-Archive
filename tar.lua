@@ -148,6 +148,27 @@ function tar.load(path, noser, rawdata)
     return noser and retval or tar.unserialize(retval)
 end
 
+-- decompresses a file using gzip
+-- @param path the path to the archive
+-- @returns the raw data
+function tar.decompress(path)
+    local LibDeflate = require("LibDeflate")
+    local rawdata = ""
+    local file = fs.open(path, "rb")
+    local c = file.read()
+    while c ~= nil do
+        rawdata = rawdata .. string.char(c)
+        c = file.read()
+        if string.len(rawdata) % 10240 == 0 then
+            os.queueEvent("nosleep")
+            os.pullEvent()
+        end
+    end
+    file.close()
+    return LibDeflate:DecompressGzip(rawdata)
+end
+
+
 -- Extracts files from a table or file to a directory
 function tar.extract(data, path, link)
     fs.makeDir(path)
