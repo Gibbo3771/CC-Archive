@@ -155,17 +155,9 @@ function tar.decompress(path)
     local LibDeflate = require("LibDeflate")
     local rawdata = ""
     local file = fs.open(path, "rb")
-    local c = file.read()
-    while c ~= nil do
-        rawdata = rawdata .. string.char(c)
-        c = file.read()
-        if string.len(rawdata) % 10240 == 0 then
-            os.queueEvent("nosleep")
-            os.pullEvent()
-        end
-    end
+    local c = file.readAll()
     file.close()
-    return LibDeflate:DecompressGzip(rawdata)
+    return LibDeflate:DecompressGzip(c)
 end
 
 
