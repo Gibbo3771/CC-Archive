@@ -3033,10 +3033,21 @@ function LibDeflate:DecompressGzip(str)
 		offset = offset + string_byte(string.sub(str, 11, 11)) * 256 + string_byte(string.sub(str, 12, 12)) 
     end
     if band(string_byte(string.sub(str, 4, 4)), 8) == 8 then
-        while string_byte(string.sub(str, offset, offset)) ~= 0 do offset = offset + 1 end
+        while string_byte(string.sub(str, offset, offset)) ~= 0 do 
+            offset = offset + 1 end
+            if os and os.pullEvent then -- ComputerCraft requires this for long-running processes
+                os.queueEvent("nosleep")
+                os.pullEvent()
+            end
     end
     if band(string_byte(string.sub(str, 4, 4)), 16) == 16 then
-        while string_byte(string.sub(str, offset, offset)) ~= 0 do offset = offset + 1 end
+        while string_byte(string.sub(str, offset, offset)) ~= 0 do 
+            offset = offset + 1 
+            if os and os.pullEvent then -- ComputerCraft requires this for long-running processes
+                os.queueEvent("nosleep")
+                os.pullEvent()
+            end
+        end
     end
     if band(string_byte(string.sub(str, 4, 4)), 2) == 2 then
         local src_checksum = string_byte(string.sub(str, offset + 1, offset + 1)) * 256 + string_byte(string.sub(str, offset, offset)) 
